@@ -81,7 +81,7 @@ hist(d$latitude)
 
 What have you learned?  Are there any broader implications?
 
-# References
+# References 
 
 Freeman, Lance (2009). Neighbourhood Diversity, Metropolitan Segregation and Gentrification: What Are the Links in the US? Urban Studies 46(10), 2079-2101.
 
