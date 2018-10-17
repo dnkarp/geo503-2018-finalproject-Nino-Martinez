@@ -1,6 +1,6 @@
 ---
 title: "I have the best titles"
-author: Your name here
+author: Nino Martinez
 subtitle: Subtitle here if desired
 ---
 
@@ -82,4 +82,14 @@ hist(d$latitude)
 What have you learned?  Are there any broader implications?
 
 # References
+
+Freeman, Lance (2009). Neighbourhood Diversity, Metropolitan Segregation and Gentrification: What Are the Links in the US? Urban Studies 46(10), 2079-2101.
+
+Holm, Andrej & Schulz, Guido (2017). Gentrimap: A Model for Measuring Gentrification and Displacement. Gentrification and Resistance: Researching Displacement Processes and Adaption Strategies. Springer VS, 251-277
+
+Heidkamp, Patrick C & Lucas, Susan (2006). Finding the Gentrification Frontier Using Census Data: The Case of Portland, Maine. Urban Geography 27(2), 101-125.
+
+LeGates, R., & Hartman, C. (1982). Gentrification-Caused Displacement. The Urban Lawyer, 14(1), 31-55. 
+
+Zook et al (2017). Big Data and the City. Handbook of Urban Geography, 1-12.
 
