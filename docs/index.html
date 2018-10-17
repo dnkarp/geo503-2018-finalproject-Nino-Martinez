@@ -9,14 +9,14 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Your name here" />
+<meta name="author" content="Nino Martinez" />
 
 
-<title>I have the best titles</title>
+<title>Gentrification and Displacement in Buffalo, NY</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/simplex.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -110,34 +110,34 @@ button.code-folding-btn:focus {
 <style type="text/css">
 /* padding for bootstrap navbar */
 body {
-  padding-top: 41px;
+  padding-top: 51px;
   padding-bottom: 40px;
 }
 /* offset scroll position for anchor links (for fixed navbar)  */
 .section h1 {
-  padding-top: 46px;
-  margin-top: -46px;
+  padding-top: 56px;
+  margin-top: -56px;
 }
 
 .section h2 {
-  padding-top: 46px;
-  margin-top: -46px;
+  padding-top: 56px;
+  margin-top: -56px;
 }
 .section h3 {
-  padding-top: 46px;
-  margin-top: -46px;
+  padding-top: 56px;
+  margin-top: -56px;
 }
 .section h4 {
-  padding-top: 46px;
-  margin-top: -46px;
+  padding-top: 56px;
+  margin-top: -56px;
 }
 .section h5 {
-  padding-top: 46px;
-  margin-top: -46px;
+  padding-top: 56px;
+  margin-top: -56px;
 }
 .section h6 {
-  padding-top: 46px;
-  margin-top: -46px;
+  padding-top: 56px;
+  margin-top: -56px;
 }
 </style>
 
@@ -303,72 +303,46 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">I have the best titles</h1>
-<h3 class="subtitle"><em>Subtitle here if desired</em></h3>
-<h4 class="author"><em>Your name here</em></h4>
+<h1 class="title toc-ignore">Gentrification and Displacement in Buffalo, NY</h1>
+<h3 class="subtitle"><em>Using Census and Open Data to Map Neighborhood Change</em></h3>
+<h4 class="author"><em>Nino Martinez</em></h4>
 
 </div>
 
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>My really awesome and complete introduction will go here.</p>
+<p>In recent years, some neighborhoods in Buffalo, NY have experienced a substantial increase in the prosperity of the population, others, however, experienced increasing levels of concentrated disadvantage. Here, I use the definition of gentrification given by The Encyclopedia of Housing as “the process by which central urban neighborhoods that have undergone disinvestments and economic decline experience a reversal, reinvestment, and the in-migration of a relatively well-off, middle- and upper middle class population” (Freeman 2080). Gentrification can displace marginalized populations and most literature document the cause of residential displacement results from increasing rent prices and or home values, no longer affordable for the existing population prior to neighborhood revitalization (LeGates &amp; Hartman 32). Despite the growing demand for up-to-date data that could provide insight into mitigation strategies for the negative consequences of gentrification, only a few studies “attempt to measure gentrification systematically or that document the extent and the form of displacement due to gentrification” (Holm &amp; Schulz, 251).</p>
 <blockquote>
-<p>I know words. I have the best words. ~ Donald Trump</p>
+<p>In Rust Belt cities like Buffalo, the [displacement] trend plays out differently than in booming coastal cities like San Francisco and New York. But for all these urban centers, increased public and private investment in downtown neighborhoods combined with changing cultural preferences toward urban lifestyles are changing the fabric of these cities in ways scarcely imagined a decade or two ago. ~ Danya Sherman</p>
 </blockquote>
 </div>
 <div id="materials-and-methods" class="section level1">
 <h1>Materials and methods</h1>
-<p>Narrative and most code will go here. Describe what you are doing and show how to do it (with code).</p>
-<p>You can do bullets like this:</p>
-<ul>
-<li>The first most important thing</li>
-<li>The second most important thing</li>
-<li>The third most important thing</li>
-</ul>
-<p>You can do numbers like this:</p>
 <ol style="list-style-type: decimal">
-<li>The first most important thing</li>
-<li>The second most important thing</li>
-<li>The third most important thing</li>
+<li>Open data Buffalo Portal</li>
 </ol>
+<ul>
+<li>2018-2019 Assessment Roll (.csv)</li>
+<li>Neighborhood boundaries (.shp)</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>Census Data</li>
+</ol>
+<ul>
+<li>2010 U.S. Census Bureau American Community Survey 5-year Estimates (2006-2010)</li>
+<li>2016 U.S. Census Bureau American Community Survey 5-year Estimates (2012-2016)</li>
+<li>City census tract/block groups (not sure yet) boundaries (.shp)</li>
+</ul>
+<p><br>While traditional methods of measuring gentrification rely heavily upon the use of analyzing key indicators of gentrification, such as increasing percentage of white population, higher incomes, and rents (Heidkamp &amp; Lucas, 104). This methodology is not able to analyze changing neighborhood dynamics in close-to-real time due to the infrequency of community surveys and the year lag time of results. In addition, as the geographic unit gets smaller, accuracy of the data also diminishes due to higher margins of error, thus blurring both perceived and established neighborhood boundaries as well as the dynamics of change. New methods of quantifying changing cities arose from the “emerging cloud of Big Data”, and prove useful to supplement traditional methods of measuring gentrification and displacement (Zook et al., 2). Open data portals provided by local government agencies are also incredibly valuable. These publically available datasets can provide useful information on neighborhood change at the individual level.</br></p>
+<p><br>In recent years, some residential tax parcels have sold for much more than the assessed value and are located in neighborhoods where revitalization efforts have taken place. The total assessment value of each residential tax parcel determines how much a homeowner pays in property taxes each year, thus contributes to the development of city infrastructure. The purpose of this project is to use the city of Buffalo’s Open Data Portal to analyze and visualize gentrification based on the sold price of residential tax parcels above the total assessment value and understand which changing socioeconomic variables play the largest role the amount sold price was over the assessment value. By using R Studio, I will filter the dataset to only include residential tax parcels that were sold between 2010 and 2016 for higher than the assessed value, which I will then group by census tract to portray descriptive statistics for each neighborhood. By using census data provided by the U.S. Census Bureau’s American Community Survey 5-year estimates for 2010 and 2016, I will analyze the socioeconomic change of key indicators of gentrification documented in the literature, also at the census tract level. In order to model this relationship, I will use a multivariate regression model to test the strength of the relationships.</br></p>
 <p>See <a href="http://rmarkdown.rstudio.com/" class="uri">http://rmarkdown.rstudio.com/</a> for all the amazing things you can do.</p>
 <p>Here’s my first code chunk.</p>
-<pre class="r"><code>1+2</code></pre>
-<pre><code>## [1] 3</code></pre>
 <p>Load any required packages in a code chunk (you may need to install some packages):</p>
-<pre class="r"><code>library(dplyr)
-library(ggplot2)
-library(maps)
-library(spocc)
-knitr::opts_chunk$set(cache=TRUE)  # cache the results for quick compiling</code></pre>
-<p>We are going to use the <code>occ()</code> function to download <em>occurrence</em> records for the American robin (<em>Turdus migratorius</em>) from the <a href="gbif.org">Global Biodiversity Information Facility</a>.</p>
-<p><img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/Turdus-migratorius-002.jpg" alt="alt text" width="200"> <small><small><small>Licensed under CC BY-SA 3.0 via <a href="https://commons.wikimedia.org/wiki/File:Turdus-migratorius-002.jpg#/media/File:Turdus-migratorius-002.jpg">Wikimedia Commons</a></small></small></small></p>
-<pre class="r"><code>## define which species to query
-sp=&#39;Turdus migratorius&#39;
-
-## run the query and convert to data.frame()
-d = occ(query=sp, from=&#39;ebird&#39;,limit = 100) %&gt;% occ2df()</code></pre>
-<p>This can take a few seconds.</p>
-<pre class="r"><code># Load coastline
-map=map_data(&quot;world&quot;)
-
-ggplot(d,aes(x=longitude,y=latitude))+
-  geom_polygon(aes(x=long,y=lat,group=group),data=map)+
-  geom_point(col=&quot;red&quot;)+
-  coord_equal()</code></pre>
-<div class="figure">
-<img src="index_files/figure-html/unnamed-chunk-4-1.png" alt="Map illustrating the known occurrence locations" width="576" />
-<p class="caption">
-Map illustrating the known occurrence locations
-</p>
-</div>
 </div>
 <div id="results" class="section level1">
 <h1>Results</h1>
 <p>Show tables, plots, etc. and describe them.</p>
-<pre class="r"><code>hist(d$latitude)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 </div>
 <div id="conclusions" class="section level1">
 <h1>Conclusions</h1>
@@ -376,6 +350,11 @@ Map illustrating the known occurrence locations
 </div>
 <div id="references" class="section level1">
 <h1>References</h1>
+<p>Freeman, Lance (2009). Neighbourhood Diversity, Metropolitan Segregation and Gentrification: What Are the Links in the US? Urban Studies 46(10), 2079-2101.</p>
+<p>Holm, Andrej &amp; Schulz, Guido (2017). Gentrimap: A Model for Measuring Gentrification and Displacement. Gentrification and Resistance: Researching Displacement Processes and Adaption Strategies. Springer VS, 251-277</p>
+<p>Heidkamp, Patrick C &amp; Lucas, Susan (2006). Finding the Gentrification Frontier Using Census Data: The Case of Portland, Maine. Urban Geography 27(2), 101-125.</p>
+<p>LeGates, R., &amp; Hartman, C. (1982). Gentrification-Caused Displacement. The Urban Lawyer, 14(1), 31-55.</p>
+<p>Zook et al (2017). Big Data and the City. Handbook of Urban Geography, 1-12.</p>
 </div>
 
 <!-- give the footer some space -->
