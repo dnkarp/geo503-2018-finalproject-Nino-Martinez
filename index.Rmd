@@ -5,19 +5,141 @@ subtitle: Using Census and Open Data to Map Neighborhood Change
 ---
 
 # Introduction
- In recent years, some neighborhoods in Buffalo, NY have experienced a substantial increase in the prosperity of the population, others, however, experienced increasing levels of concentrated disadvantage. Here, I use the definition of gentrification given by The Encyclopedia of Housing as “the process by which central urban neighborhoods that have undergone disinvestments and economic decline experience a reversal, reinvestment, and the in-migration of a relatively well-off, middle- and upper middle class population” (Freeman 2080). Gentrification can displace marginalized populations and most literature document the cause of residential displacement results from increasing rent prices and or home values, no longer affordable for the existing population prior to neighborhood revitalization (LeGates & Hartman 32). Despite the growing demand for up-to-date data that could provide insight into mitigation strategies for the negative consequences of gentrification, only a few studies “attempt to measure gentrification systematically or that document the extent and the form of displacement due to gentrification” (Holm & Schulz, 251).  
+
+
+   In September of 2017, the city of Buffalo announced the reassessment of over 95,000 properties, which will be the first reassessment done since 2010. Officials say, “The purpose of a property reassessment is to establish uniform, fair, and equitable assessments on all real property types” (Slawson, 2017).  The total assessment value of each residential tax parcel often determines how much a homeowner pays in property taxes each year, thus contributes to the development of city infrastructure. In recent years, some residential tax parcels have sold for much more than the assessed value, and are located in neighborhoods where revitalization efforts have taken place. The problem is that in some neighborhoods “property values have shot up so drastically that some homeowners are facing 30% tax increases, or more, compared to when they purchased their affordable homes a decade ago” (Buffalo Rising, 2018).
+In recent years, some neighborhoods in Buffalo, NY have experienced a substantial increase in the prosperity of the population, others, however, experienced increasing levels of concentrated disadvantage. Here, I use the definition of gentrification given by The Encyclopedia of Housing as “the process by which central urban neighborhoods that have undergone disinvestments and economic decline experience a reversal, reinvestment, and the in-migration of a relatively well-off, middle- and upper middle class population” (Freeman, 2080). Gentrification can displace marginalized populations and most literature document that residential displacement results from increasing rent prices and or home values, no longer affordable for the residing population prior to neighborhood revitalization (LeGates & Hartman 32). 
+
+
+ Despite the growing demand for up-to-date data that could provide insight into mitigation strategies for the negative consequences of gentrification, only a few studies “attempt to measure gentrification systematically or that document the extent and the form of displacement due to gentrification” (Holm & Schulz, 251). Traditional methods of measuring gentrification rely heavily on census data and analyzing key indicators of neighborhood change, such as increasing percentage of white population, higher incomes, and rising rents (Heidkamp & Lucas, 104). This methodology is not able to analyze changing neighborhood dynamics in close-to-real time due to the infrequency of community surveys and the year lag time in results. In addition, as the geographic unit gets smaller, accuracy of the data also diminishes due to higher margins of error, thus blurring both perceived and established neighborhood boundaries in the dynamics of the change. New methods of quantifying changing cities are arising with the “emerging cloud of Big Data” that prove useful to supplement traditional methods to measure gentrification and displacement (Zook et al.) Open data portals provided by local government agencies are also incredibly valuable. These publically available datasets can provide useful information on neighborhood change at the household level. 
+
+
+The purpose of this project is to use the city of Buffalo’s Open Data Portal to analyze, visualize, and quantify gentrification based on the sold price of residential tax parcels above the total assessment value, and understand if changing socioeconomic variables play a role in the sale price of residential parcels over its assessed value. Very little academic literature discusses and analyses gentrification in Rust-Belt cities, but what exists says; “In Rust Belt cities like Buffalo, the [displacement] trend plays out differently than in booming coastal cities like San Francisco and New York. But for all these urban centers, increased public and private investment in downtown neighborhoods combined with changing cultural preferences toward urban lifestyles are changing the fabric of these cities in ways scarcely imagined a decade or two ago” (Sherman, 3). Quantifying displacement is problematic due to “lacking the ability to track ‘displacees’” (Atkinson, 149), which happens when data is not available at the individual level to understand migration patterns. Therefore, this project does not empirically analyze displacement, rather, to use available assessment data and analyze gentrification and populations that are at the greatest risk of displacement based on potentially rising property taxes due to the city of Buffalo’s reassessment project.
+	
+	
+> Gentrification is the process by which central urban neighborhoods that have undergone disinvestments and economic decline experience a reversal, reinvestment, and the in-migration of a relatively well-off, middle- and upper middle class population. ~ The Encyclopedia of Housing
 
 > In Rust Belt cities like Buffalo, the [displacement] trend plays out differently than in booming coastal cities like San Francisco and New York. But for all these urban centers, increased public and private investment in downtown neighborhoods combined with changing cultural preferences toward urban lifestyles are changing the fabric of these cities in ways scarcely imagined a decade or two ago.  ~ Danya Sherman
 
-# Materials and methods
-
-1. Open data Buffalo Portal
+# Data Sources
+1. Neighborhood Change Database (NCDB)
+  - Decline70_00.csv
+2. Open data Buffalo Portal
   - 2018-2019 Assessment Roll (.csv)
   - Neighborhood boundaries (.shp)
-2. Census Data
+3. Census Data
   - 2010 U.S. Census Bureau American Community Survey 5-year Estimates (2006-2010)
   - 2016 U.S. Census Bureau American Community Survey 5-year Estimates (2012-2016)
-  - City census tract/block groups (not sure yet) boundaries (.shp)
+  - City census tract boundaries (.shp)
+  
+# Methodology
+
+## Measuring Concentrated Disadvantage
+
+In order to properly quantify gentrification, it is necessary to measure urban decline and concentrated disadvantage within the city historically. “By definition, gentrification is reinvestment in and rebuilding of the physical structures that have undergone a period of disinvestment" (Heidkamp & Lucas, 107). Neighborhoods that experience a period of disinvesment are often concentrated in disadvantage. Circumstances that make success (most often economically) unusually difficult make places disadvantaged, and “the presence of disadvantage weakens a place’s ability to achieve this goal [economic success]” (Weaver et al, 35). When multiple layers of disadvantage occur in a single location, concentrated disadvantage exists (36). By using the geometric mean of five disadvantage variables provided by the NCDB, I calculate concentrate disadvantage (CD) for the years 1970-2000. I use the same variables used by Weaver et al, 2017 in my calculations because all variables are represented as percentages, thus making comparisons across time consistent as they range from a value of 0-100. The equation can be represented as:
+
+$Gi  = [(Percent Nonwhitei)* (Percent Female Headed Householdsi) * (Percent Unemployedi) * (Percent in Povertyi) * (Percent Low Educationi)]^1/5, i: 1, 2, …, n$
+
+```{r message = FALSE, warning=FALSE}
+#load all necessary libraries for analysis
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(tmap)
+library(broom)
+library(ggmap)
+library(sp)
+library(sf) 
+```
+
+```{r warning=FALSE, message=FALSE}
+# For reproducability, set working directory to the data folder of your cloned/downloaded file
+
+
+decline <- read.csv("Data/Decline70_00.csv")
+
+#Select attributes relevant to 1970 concentrated disadvantage
+
+index70 <- select(decline, GeoID, Pop_70, PerWhite_70, PerFHH_70, Edu08_70, Edu812_70, X25Pop_70, PerPov_70, PerUnEmp_70) 
+
+# Create new columns for percent nonwhite and percent undereducated
+
+geoindex70 <- mutate(index70, 
+                     PerLowEdu70 = (Edu08_70 + Edu812_70)/X25Pop_70,
+                     PerNonWhite70 = 1 - PerWhite_70) 
+
+# Calculate the geometric index of concentrated disadvantage in 1970 
+
+disadvantage70 <- mutate(geoindex70,
+                         index_70 = (PerNonWhite70 * PerFHH_70 * PerUnEmp_70 * PerPov_70 * PerLowEdu70)^(1/5)*100)
+
+# Create new df only the GeoID and the geometric index of concentrated disadvantage for joining and mapping later
+
+conDis_1970 <- select(disadvantage70, GeoID, index_70)
+
+# Make sure it worked
+
+head(conDis_1970)
+
+```
+Repeat steps for 1980, 1990, and 2000
+
+```{r message=FALSE, warning=FALSE}
+# 1980
+
+index80 <- select(decline, GeoID, Pop_80, PerWhite_80, PerFHH_80, Edu08_80, Edu812_80, X25pop_80, PerPov_80, PerUnemp_80)
+
+geoindex80 <- mutate(index80, 
+                     PerLowEdu80 = (Edu08_80 + Edu812_80)/X25pop_80,
+                     PerNonWhite80 = 1 - PerWhite_80)
+
+disadvantage80 <- mutate(geoindex80,
+                         index_80 = (PerNonWhite80 * PerFHH_80 * PerUnemp_80 * PerPov_80 * PerLowEdu80)^(1/5)*100)
+
+conDis_1980 <- select(disadvantage80, GeoID, index_80)
+
+#1990
+
+index90 <- select(decline, GeoID, Pop_90, PerWhite_90, PerFH_90, Edu08_90, Edu812_90, X25pop_90, PovPer_90, PerUnEmp_90)
+
+geoindex90 <- mutate(index90, 
+                     PerLowEdu90 = (Edu08_90 + Edu812_90)/X25pop_90,
+                     PerNonWhite90 = 1 - PerWhite_90)
+
+disadvantage90 <- mutate(geoindex90,
+                         index_90 = (PerNonWhite90 * PerFH_90 * PerUnEmp_90 * PovPer_90 * PerLowEdu90)^(1/5)*100)
+
+conDis_1990 <- select(disadvantage90, GeoID, index_90)
+
+# 2000
+
+index00 <- select(decline, GeoID, Pop_00, PerWhite_90.1, PerFHH_00, Edu08_00, Edu812_00, X25Pop_00, PerPov_00, PerUnEmp_00)
+
+geoindex00 <- mutate(index00, 
+                     PerLowEdu00 = (Edu08_00 + Edu812_00)/X25Pop_00,
+                     PerNonWhite00 = 1 - PerWhite_90.1)
+
+disadvantage00 <- mutate(geoindex00,
+                         index_00 = (PerNonWhite00 * PerFHH_00 * PerUnEmp_00 * PerPov_00 * PerLowEdu00)^(1/5)*100)
+
+conDis_2000 <- select(disadvantage00, GeoID, index_00)
+
+
+```
+Now join all of the conDis_"year" dataframes so there is just one clean file for mapping
+
+```{r}
+conDis_70_80 <- full_join(conDis_1970, conDis_1980, "GeoID", "GeoID")
+conDis_70_80_90 <- full_join(conDis_70_80, conDis_1990, "GeoID", "GeoID")
+conDis_1970_to_2000 <- full_join(conDis_70_80_90, conDis_2000, "GeoID", "GeoID")
+
+
+#Make sure it worked
+head(conDis_1970_to_2000)
+```
+
+
+## Measuring Gentrification
   
 <br>While traditional methods of measuring gentrification rely heavily upon the use of analyzing key indicators of gentrification, such as increasing percentage of white population, higher incomes, and rents (Heidkamp & Lucas, 104). This methodology is not able to analyze changing neighborhood dynamics in close-to-real time due to the infrequency of community surveys and the year lag time of results. In addition, as the geographic unit gets smaller, accuracy of the data also diminishes due to higher margins of error, thus blurring both perceived and established neighborhood boundaries as well as the dynamics of change. New methods of quantifying changing cities arose from the “emerging cloud of Big Data”, and prove useful to supplement traditional methods of measuring gentrification and displacement (Zook et al., 2). Open data portals provided by local government agencies are also incredibly valuable. These publically available datasets can provide useful information on neighborhood change at the individual level.</br>
 
