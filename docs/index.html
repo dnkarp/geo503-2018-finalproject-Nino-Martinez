@@ -434,7 +434,7 @@ disadvantage00 &lt;- mutate(geoindex00,
                          index_00 = (PerNonWhite00 * PerFHH_00 * PerUnEmp_00 * PerPov_00 * PerLowEdu00)^(1/5)*100)
 
 conDis_2000 &lt;- select(disadvantage00, GeoID, index_00)</code></pre>
-<p>Now join all of the conDis_“year” dataframes so there is just one clean file for mapping</p>
+<p>Join all of the conDis_“year” dataframes so there is just one clean file for mapping</p>
 <pre class="r"><code>conDis_70_80 &lt;- full_join(conDis_1970, conDis_1980, &quot;GeoID&quot;, &quot;GeoID&quot;)
 conDis_70_80_90 &lt;- full_join(conDis_70_80, conDis_1990, &quot;GeoID&quot;, &quot;GeoID&quot;)
 conDis_1970_to_2000 &lt;- full_join(conDis_70_80_90, conDis_2000, &quot;GeoID&quot;, &quot;GeoID&quot;)
@@ -449,6 +449,113 @@ head(conDis_1970_to_2000)</code></pre>
 ## 4 3.6029e+10  4.488601  8.513636  6.340130  9.727399
 ## 5 3.6029e+10  0.000000  3.069325  5.860574  6.924474
 ## 6 3.6029e+10  3.881401  8.521317  8.623177 11.286938</code></pre>
+<p>Join the Concentrated Disadvantage Data with the Spatial Polygon Data to map and caluculate summary values based off of only City of Buffalo census tracts instead of all of erie county</p>
+<pre class="r"><code>buffalo_tracts &lt;- st_read(&quot;Data/Buffalo.shp&quot;) #read in shapefile</code></pre>
+<pre><code>## Reading layer `Buffalo&#39; from data source `C:\Users\Leigh\Desktop\Spatial Data Science\geo503-2018-finalproject-Nino-Martinez\Data\Buffalo.shp&#39; using driver `ESRI Shapefile&#39;
+## Simple feature collection with 79 features and 12 fields
+## geometry type:  POLYGON
+## dimension:      XY
+## bbox:           xmin: -78.91425 ymin: 42.82602 xmax: -78.79516 ymax: 42.96646
+## epsg (SRID):    4269
+## proj4string:    +proj=longlat +datum=NAD83 +no_defs</code></pre>
+<pre class="r"><code>conDis_1970_to_2000$GeoID &lt;- as.character(conDis_1970_to_2000$GeoID) #Change factor to character to join
+Buffalo_ConDis &lt;- full_join(buffalo_tracts, conDis_1970_to_2000, by = c(&quot;GEOID10&quot; = &quot;GeoID&quot;))
+head(Buffalo_ConDis)</code></pre>
+<pre><code>## Simple feature collection with 6 features and 16 fields
+## geometry type:  POLYGON
+## dimension:      XY
+## bbox:           xmin: -78.91425 ymin: 42.92218 xmax: -78.84816 ymax: 42.96126
+## epsg (SRID):    4269
+## proj4string:    +proj=longlat +datum=NAD83 +no_defs
+##   STATEFP10 COUNTYFP10 TRACTCE10     GEOID10 NAME10      NAMELSAD10
+## 1        36        029    005300 36029005300     53 Census Tract 53
+## 2        36        029    005400 36029005400     54 Census Tract 54
+## 3        36        029    005500 36029005500     55 Census Tract 55
+## 4        36        029    005600 36029005600     56 Census Tract 56
+## 5        36        029    005700 36029005700     57 Census Tract 57
+## 6        36        029    005900 36029005900     59 Census Tract 59
+##   MTFCC10 FUNCSTAT10 ALAND10 AWATER10  INTPTLAT10   INTPTLON10  index_70
+## 1   G5020          S 2312977     5623 +42.9293726 -078.8597263  6.188326
+## 2   G5020          S 1824964   105583 +42.9379527 -078.8681782  5.916014
+## 3   G5020          S 1551922        0 +42.9389099 -078.8889077  9.199522
+## 4   G5020          S 2198732        0 +42.9511733 -078.8866130 14.002677
+## 5   G5020          S  956845        0 +42.9497231 -078.8992508 13.834880
+## 6   G5020          S 1218299   298165 +42.9373135 -078.9031215  9.405198
+##   index_80  index_90  index_00                       geometry
+## 1 12.94891 23.317384 30.975091 POLYGON ((-78.85173 42.9274...
+## 2  9.10364  7.239877  9.040853 POLYGON ((-78.87817 42.9360...
+## 3 12.47494 19.763139 25.604086 POLYGON ((-78.87819 42.9363...
+## 4 22.04577 23.613947 29.162020 POLYGON ((-78.89561 42.9463...
+## 5 16.73563 18.073085 22.742578 POLYGON ((-78.89683 42.9443...
+## 6 18.88942 19.490110 23.120596 POLYGON ((-78.90468 42.9334...</code></pre>
+<pre class="r"><code>conDis_70_mean &lt;- mean(Buffalo_ConDis$index_70)
+conDis_80_mean &lt;- mean(Buffalo_ConDis$index_80)
+conDis_90_mean &lt;- mean(Buffalo_ConDis$index_90)
+conDis_00_mean &lt;- mean(Buffalo_ConDis$index_00)
+
+# Create a matrix to plot the change in mean concenctrated disadvantage over time
+
+conDis_mean_matrix &lt;- matrix(nrow = 4, ncol = 2, c(&quot;1970&quot;,&quot;1980&quot;,&quot;1990&quot;,&quot;2000&quot;,conDis_70_mean,conDis_80_mean, conDis_90_mean,conDis_00_mean))
+colnames(conDis_mean_matrix) &lt;- c(&quot;Year&quot;, &quot;Index&quot;)
+conDis_mean_matrix</code></pre>
+<pre><code>##      Year   Index             
+## [1,] &quot;1970&quot; &quot;13.429840007239&quot; 
+## [2,] &quot;1980&quot; &quot;22.4313439322873&quot;
+## [3,] &quot;1990&quot; &quot;24.3842700294622&quot;
+## [4,] &quot;2000&quot; &quot;26.1485819778508&quot;</code></pre>
+<pre class="r"><code>#Convert to dataframe for plotting
+
+conDis_mean_df &lt;- as.data.frame(conDis_mean_matrix)
+conDis_mean_df</code></pre>
+<pre><code>##   Year            Index
+## 1 1970  13.429840007239
+## 2 1980 22.4313439322873
+## 3 1990 24.3842700294622
+## 4 2000 26.1485819778508</code></pre>
+<div id="preliminary-analysis" class="section level3">
+<h3>Preliminary Analysis</h3>
+<p>From 1970 to 2000, the average geometric index of concentrated disadvantage nearly doubled, with the most dramatic increase being between the 1970 and 1980. While this shows that disadvantage increased in the city as a whole, it is necessary to analyse the spatial distribution of CD over time within the city as a precursour to the analysis of gentrification. I identify tracts succeptible to gentrification if during any time period, the tracts geometric index is greater than mean. While I use census tracts for the analysis, I also use neighborhood boundary files provided by the open data buffalo portal to distinguish neighborhoods in the report.</p>
+<pre class="r"><code># read in neighborhood shapefile
+
+neighborhoods &lt;- st_read(&quot;Data/nbhds.shp&quot;)</code></pre>
+<pre><code>## Reading layer `nbhds&#39; from data source `C:\Users\Leigh\Desktop\Spatial Data Science\geo503-2018-finalproject-Nino-Martinez\Data\nbhds.shp&#39; using driver `ESRI Shapefile&#39;
+## Simple feature collection with 35 features and 11 fields
+## geometry type:  POLYGON
+## dimension:      XY
+## bbox:           xmin: -78.91246 ymin: 42.82603 xmax: -78.79504 ymax: 42.96641
+## epsg (SRID):    4326
+## proj4string:    +proj=longlat +datum=WGS84 +no_defs</code></pre>
+<pre class="r"><code>CD_70_map &lt;-  tm_shape(Buffalo_ConDis) + tm_polygons(&quot;index_70&quot;, style = &quot;cont&quot;,
+                                                 palette = &quot;seq&quot;,
+                                                 n = 7,
+                                                 title = &quot;Geometric Index&quot;) + 
+  tm_shape(neighborhoods) + tm_polygons(alpha = 0, border.col = &quot;black&quot;) +
+  tm_layout(aes.palette = &quot;Reds&quot;, legend.outside = TRUE, main.title = &quot;Concentrated Disadvantage 1970&quot;, main.title.size = .75)
+
+CD_80_map &lt;-  tm_shape(Buffalo_ConDis) + tm_polygons(&quot;index_80&quot;, style = &quot;cont&quot;,
+                                                 palette = &quot;seq&quot;,
+                                                 n = 7,
+                                                 title = &quot;Geometric Index&quot;) + 
+  tm_shape(neighborhoods) + tm_polygons(alpha = 0, border.col = &quot;black&quot;) +
+  tm_layout(aes.palette = &quot;Reds&quot;, legend.outside = TRUE, main.title = &quot;Concentrated Disadvantage 1980&quot;, main.title.size = .75)
+
+CD_90_map &lt;-  tm_shape(Buffalo_ConDis) + tm_polygons(&quot;index_90&quot;, style = &quot;cont&quot;,
+                                                 palette = &quot;seq&quot;,
+                                                 n = 7,
+                                                 title = &quot;Geometric Index&quot;) + 
+  tm_shape(neighborhoods) + tm_polygons(alpha = 0, border.col = &quot;black&quot;) +
+  tm_layout(aes.palette = &quot;Reds&quot;, legend.outside = TRUE, main.title = &quot;Concentrated Disadvantage 1990&quot;, main.title.size = .75)
+
+CD_00_map &lt;-  tm_shape(Buffalo_ConDis) + tm_polygons(&quot;index_00&quot;, style = &quot;cont&quot;,
+                                                 palette = &quot;seq&quot;,
+                                                 n = 7,
+                                                 title = &quot;Geometric Index&quot;) + 
+  tm_shape(neighborhoods) + tm_polygons(alpha = 0, border.col = &quot;black&quot;) +
+  tm_layout(aes.palette = &quot;Reds&quot;, legend.outside = TRUE, main.title = &quot;Concentrated Disadvantage 2000&quot;, main.title.size = .75)
+
+tmap_arrange(nrow = 2, CD_70_map, CD_80_map, CD_90_map, CD_00_map)</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
 </div>
 <div id="measuring-gentrification" class="section level2">
 <h2>Measuring Gentrification</h2>
