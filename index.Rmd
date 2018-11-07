@@ -159,11 +159,13 @@ conDis_mean_matrix
 #Convert to dataframe for plotting
 
 conDis_mean_df <- as.data.frame(conDis_mean_matrix)
-conDis_mean_df
+
+ggplot(conDis_mean_df) + geom_col(mapping = aes(Year, Index, fill = "Red")) +ggtitle("Change in Average Concentrated Disadvantage", subtitle = "Buffalo, NY 1970-2000") + scale_y_discrete("Index")
+
 ```
 ### Preliminary Analysis
 
-From 1970 to 2000, the average geometric index of concentrated disadvantage nearly doubled, with the most dramatic increase being between the 1970 and 1980. While this shows that disadvantage increased in the city as a whole, it is necessary to analyse the spatial distribution of CD over time within the city as a precursour to the analysis of gentrification. I identify tracts succeptible to gentrification if during any time period, the tracts geometric index is greater than mean. While I use census tracts for the analysis, I also use neighborhood boundary files provided by the open data buffalo portal to distinguish neighborhoods in the report.
+From 1970 to 2000, the average geometric index of concentrated disadvantage (CD) nearly doubled, with the most dramatic increase being between the 1970 and 1980. While this shows that disadvantage increased in the city as a whole, it is necessary to analyse the spatial distribution of CD over time within the city as a precursour to the analysis of gentrification. Using the 'tmap' package and the function tmap_arrange, we can evaluate the extent of dispersion in CD.
 
 ```{r}
 # read in neighborhood shapefile
@@ -174,32 +176,138 @@ neighborhoods <- st_read("Data/nbhds.shp")
 CD_70_map <-  tm_shape(Buffalo_ConDis) + tm_polygons("index_70", style = "cont",
                                                  palette = "seq",
                                                  n = 7,
-                                                 title = "Geometric Index") + 
+                                                 title = "Geometric Index",
+                                                 border.alpha = .50) + 
   tm_shape(neighborhoods) + tm_polygons(alpha = 0, border.col = "black") +
   tm_layout(aes.palette = "Reds", legend.outside = TRUE, main.title = "Concentrated Disadvantage 1970", main.title.size = .75)
 
 CD_80_map <-  tm_shape(Buffalo_ConDis) + tm_polygons("index_80", style = "cont",
                                                  palette = "seq",
                                                  n = 7,
-                                                 title = "Geometric Index") + 
+                                                 title = "Geometric Index",
+                                                 border.alpha = .50) + 
   tm_shape(neighborhoods) + tm_polygons(alpha = 0, border.col = "black") +
   tm_layout(aes.palette = "Reds", legend.outside = TRUE, main.title = "Concentrated Disadvantage 1980", main.title.size = .75)
 
 CD_90_map <-  tm_shape(Buffalo_ConDis) + tm_polygons("index_90", style = "cont",
                                                  palette = "seq",
                                                  n = 7,
-                                                 title = "Geometric Index") + 
+                                                 title = "Geometric Index",
+                                                 border.alpha = .50) + 
   tm_shape(neighborhoods) + tm_polygons(alpha = 0, border.col = "black") +
   tm_layout(aes.palette = "Reds", legend.outside = TRUE, main.title = "Concentrated Disadvantage 1990", main.title.size = .75)
 
 CD_00_map <-  tm_shape(Buffalo_ConDis) + tm_polygons("index_00", style = "cont",
                                                  palette = "seq",
                                                  n = 7,
-                                                 title = "Geometric Index") + 
+                                                 title = "Geometric Index",
+                                                 border.alpha = .50) + 
   tm_shape(neighborhoods) + tm_polygons(alpha = 0, border.col = "black") +
   tm_layout(aes.palette = "Reds", legend.outside = TRUE, main.title = "Concentrated Disadvantage 2000", main.title.size = .75)
 
 tmap_arrange(nrow = 2, CD_70_map, CD_80_map, CD_90_map, CD_00_map)
+```
+
+CD from 1970 to 2000 spread in an interesting way, with persistent high indices of disadvantage in the central business district (CBD) and expaning out to the city border on the east and west parts of Buffalo, with compariably low indices in census tracts directly North of the CBD. With the historical context in mind, I evaluate disinvested tracts as any tracts whose geometric index of CD is equal to or greater than the average of all tracts.
+
+```{r}
+conDis_00_mean
+```
+Using the R packages "leaflet", "rgdal", "geojsonio", and "rmapshaper", I created an interactive map that allows users to explore the census tracts within neighborhood boundaries with high levels of CD in order to set the criteria for measuring gentrification.
+
+```{r message=FALSE, warning=FALSE}
+# Load necessary packages
+library(sp)
+library(sf)
+library(rgdal)
+library(spdplyr)
+library(geojsonio)
+library(rmapshaper)
+library(leaflet)
+
+# Convert sf to sp in order to convert to geojson for interactive mapping with leaflet
+
+Buffalo_ConDis_sp <- as(Buffalo_ConDis, "Spatial") # Concentrated Disadvantage
+neighborhoods_sp <- as(neighborhoods, "Spatial") # Neighborhood Boundaries
+
+# Convert to geojson
+
+buffalo_cd_json <- geojson_json(Buffalo_ConDis_sp)
+neighborhoods_json <- geojson_json(neighborhoods_sp)
+
+# Simplify the geometry to decrease storage size of spatial object
+
+buffalo_cd_json_simp <- ms_simplify(buffalo_cd_json)
+neighborhoods_json_simp <- ms_simplify(neighborhoods_json)
+
+# Write as a geojson to bring back into R for mapping
+
+geojson_write(buffalo_cd_json_simp, file = "city_CD.geojson")
+geojson_write(neighborhoods_json_simp, file = "neighborhoods.geojson")
+
+# Read in .geojson to map
+
+city_CD <- geojson_read("city_CD.geojson", what = "sp")
+nbhds_json <- geojson_read("neighborhoods.geojson", what = "sp")
+
+# Map for interactive view of concentrated disadvantage
+
+bins <- c(0, 8.71, 17.43,20,26.14, 33, 40, 50.4) # Sets the interval for color scheme
+pal_00 <- colorBin("YlOrRd", domain = city_CD$index_00, bins = bins) # Gives seqential color scheme
+
+# Created html popup of index of concentrated disadvantage
+
+labels_00 <- sprintf(
+  "<strong>%g index of CD</strong>",
+  city_CD$index_00
+) %>% lapply(htmltools::HTML)
+
+# Create leaflet map to label by geometric index
+
+CD_Map_2000 <- leaflet() %>% setView(-78.8784, 42.8864, 10.9) %>% addTiles() %>%
+  addPolygons(data = nbhds_json, fillOpacity = 0, weight = 3, opacity = 1) %>%
+  addPolygons(data = city_CD, fillColor = ~pal_00(index_00),
+  weight = 0.5,
+  opacity = 0.5,
+  color = "white",
+  dashArray = "3",
+  fillOpacity = 0.5,
+  highlight = highlightOptions(
+    weight = 5,
+    color = "#666",
+    dashArray = "",
+    fillOpacity = 0.5,
+    bringToFront = TRUE),
+  label = labels_00,
+  labelOptions = labelOptions(
+    style = list("font-weight" = "normal", padding = "3px 8px"),
+    textsize = "15px",
+    direction = "auto")) 
+
+# Create leaflet map to label by neighborhood
+
+CD_nbhd_2000 <- leaflet() %>% setView(-78.8784, 42.8864, 10.7) %>% addTiles() %>%
+  addPolygons(data = city_CD, fillColor = ~pal_00(index_00),
+              weight = 2,
+              opacity = 1,
+              color = "white",
+              dashArray = "3",
+              fillOpacity = 0.5) %>%
+  addPolygons(data = nbhds_json, fillOpacity = 0, weight = 1.2,
+                          label = nbhds_json$nbhdname) %>%
+  addLegend(pal = pal_00, values = city_CD$index_00, opacity = 0.5, title = "Concentrated Disadvantage (%)",
+                position = "bottomleft")
+
+```
+### Explore Buffalo, NY's Areas of Concentrated Disadvantage by Geometric Index (Year 2000)
+```{r}
+CD_Map_2000
+```
+
+### Explore Buffalo, NY's Areas of Concentrated Disadvantage by Neighborhood (Year 2000)
+
+```{r}
+CD_nbhd_2000
 ```
 
 ## Measuring Gentrification
