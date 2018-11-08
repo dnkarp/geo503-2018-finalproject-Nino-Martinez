@@ -447,7 +447,7 @@ key_economic_16$Per_Pov_16 <- as.numeric(as.character(key_economic_16$Per_Pov_16
 
 key_economic_16$GEOID10 <- as.character(key_economic_16$GEOID10)
 key_economic_10$GEOID10 <- as.character(key_economic_10$GEOID10)
-all_years_economic <- full_join(key_economic_10, key_economic_16, by = c("GEOID10" = "GEOID10"))
+all_years_economic <- full_join(key_economic_10, key_economic_16, by = c("GEOID10" = "GEOID10")) 
 
 #Calculate changes in economic indicators
 
