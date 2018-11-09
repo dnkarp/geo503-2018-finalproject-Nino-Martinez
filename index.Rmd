@@ -558,6 +558,497 @@ edu_change <- all_years_education %>% mutate(college_change = Per_BachelorsPlus_
 
 ```
 
+### Race Variables
+
+```{r message = FALSE, warning=FALSE}
+## Race 2010
+
+
+race_10 <- read.csv("Data/race2_10.csv", skip = 1)
+
+key_race_10 <- race_10[,c(2:17,26,27)]
+
+colnames(key_race_10)
+
+
+race_names_10 <- c("GEOID10", 
+               "Census_Tract", 
+               "total_pop_10", 
+               "total_pop_moe_10",
+               "not_hisp_10",
+               "not_hisp_moe_10",
+               "white_10",
+               "white_MOE_10",
+               "black_10",
+               "black_moe_10",
+               "native_10",
+               "native_moe_10",
+               "asian_10",
+               "asian_moe_10",
+               "pac_isl_10",
+               "pac_isl_moe_10",
+               "hisp_10",
+               "hisp_moe_10") 
+
+colnames(key_race_10) <- race_names_10
+
+
+#Calculate percentages
+
+key_race_10 <- key_race_10 %>% mutate(per_white_10 = (white_10/total_pop_10)*100,
+                                      per_black_10 = (black_10/total_pop_10)*100,
+                                      per_asian_10 = (asian_10/total_pop_10)*100,
+                                      per_native_10 = (native_10/total_pop_10)*100,
+                                      per_pac_isl_10 = (pac_isl_10/total_pop_10)*100,
+                                      per_hisp_10 = (hisp_10/total_pop_10)*100)
+
+# Race 2016
+
+
+race_16 <- read.csv("Data/race2_16.csv", skip = 1)
+colnames(race_16)
+key_race_16 <- race_16[,c(2:17,26,27)]
+
+colnames(key_race_16)
+
+
+race_names_16 <- c("GEOID10", 
+                   "Census_Tract", 
+                   "total_pop_16", 
+                   "total_pop_moe_16",
+                   "not_hisp_16",
+                   "not_hisp_moe_16",
+                   "white_16",
+                   "white_MOE_16",
+                   "black_16",
+                   "black_moe_16",
+                   "native_16",
+                   "native_moe_16",
+                   "asian_16",
+                   "asian_moe_16",
+                   "pac_isl_16",
+                   "pac_isl_moe_16",
+                   "hisp_16",
+                   "hisp_moe_16") 
+
+colnames(key_race_16) <- race_names_16
+
+
+key_race_16 <- key_race_16 %>% mutate(per_white_16 = (white_16/total_pop_16)*100,
+                                      per_black_16 = (black_16/total_pop_16)*100,
+                                      per_asian_16 = (asian_16/total_pop_16)*100,
+                                      per_native_16 = (native_16/total_pop_16)*100,
+                                      per_pac_isl_16 = (pac_isl_16/total_pop_16)*100,
+                                      per_hisp_16 = (hisp_16/total_pop_16)*100)
+
+# # Calculate change in ethnic composition
+
+
+#Join race 10 and 16 df's
+
+#Combine race data for 2010 and 2016
+key_race_10$GEOID10 <- as.character(key_race_10$GEOID10)
+key_race_16$GEOID10 <- as.character(key_race_16$GEOID10)
+all_years_race<- full_join(key_race_10, key_race_16, by = c("GEOID10" = "GEOID10"))
+
+
+
+#Calculate change in ethnic composition population from 2010-2016 
+
+race_change <- all_years_race %>% mutate(white_change = per_white_16 - per_white_10,
+                                         black_change = per_black_16 - per_black_10,
+                                         native_change = per_native_16 - per_native_10,
+                                         asian_change = per_asian_16 - per_asian_10,
+                                         pac_isl_change = per_pac_isl_16 - per_pac_isl_10)
+
+```
+
+### Housing Variables
+
+```{r message=FALSE, warning=FALSE}
+# Housing 2010
+
+house_10 <- read.csv("Data/house_10.csv", skip = 1)
+
+key_house_10 <- house_10[,c(2:5,10,11,14,15,16,17,20,21,180:187,200:203,216:223,352,353,452:455,496,497,528,529,560:563)]
+
+colnames(key_house_10)
+
+house_names_10 <- c("GEOID10", 
+                   "Census_Tract", 
+                   "total_units_10", 
+                   "total_units_moe_10",
+                   "per_occ_10",
+                   "per_occ_moe_10",
+                   "per_vac_10",
+                   "per_vac_moe_10",
+                   "own_vac_rate_10",
+                   "own_vac_rate_moe_10",
+                   "rent_vac_rate_10",
+                   "rent_vac_rate_moe_10",
+                   "own_occ_num_10",
+                   "own_occ_num_moe_10",
+                   "own_occ_per_10",
+                   "own_occ_per_moe_10",
+                   "rent_occ_num_10",
+                   "rent_occ_num_moe_10",
+                   "rent_occ_per_10",
+                   "rent_occ_per_moe_10",
+                   "move_05plus_num_10",
+                   "move_05plus_num_moe_10",
+                   "move_05plus_per_10",
+                   "move_05plus_per_moe_10",
+                   "move_70_79_num_10",
+                   "move_70_79_num_moe_10",
+                   "move_70_79_per_10",
+                   "move_70_79_per_moe_10",
+                   "move_69earl_num_10",
+                   "move_69earl_num_moe_10",
+                   "move_69earl_per_10",
+                   "move_69earl_per_moe_10",
+                   "median_home_value_10",
+                   "median_home_value_moe_10",
+                   "SMOCAPI_35plus_num_10",
+                   "SMOCAPI_35plus_num_moe_10",
+                   "SMOCAPI_35plus_per_10",
+                   "SMOCAPI_35plus_per_moe_10",
+                   "occ_units_pay_rent_10",
+                   "occ_units_pay_rent_moe_10",
+                   "median_rent_10",
+                   "median_rent_moe_10",
+                   "GRAPI_35plus_num_10",
+                   "GRAPI_35plus_num_moe_10",
+                   "GRAPI_35plus_per_10",
+                   "GRAPI_35plus_per_moe_10") 
+
+
+colnames(key_house_10) <- house_names_10
+
+
+# Calculate number of long-standing homeowners  (ie 2010 census 1979 or earlier (31+ years))
+
+key_house_10$move_70_79_per_10 <- as.numeric(as.character(key_house_10$move_70_79_per_10))
+key_house_10$move_69earl_per_10 <- as.numeric(as.character(key_house_10$move_69earl_per_10))
+
+key_house_10 <- key_house_10 %>% mutate(move_in_30plus_yrs_num = move_70_79_num_10 +move_69earl_num_10,
+                                        move_in_30plus_yrs_per = move_70_79_per_10 + move_69earl_per_10)
+
+
+# House 2016
+
+house_16 <- read.csv("Data/house_16.csv", skip = 1)
+
+key_house_16 <- house_16[,c(2:5,10,11,14,15,16,17,20,21,184:191,204:211,220:227,356,357,460:463,504,505,536:537,568:571)]
+
+colnames(key_house_16)
+
+house_names_16 <- c("GEOID10", 
+                    "Census_Tract", 
+                    "total_units_16", 
+                    "total_units_moe_16",
+                    "per_occ_16",
+                    "per_occ_moe_16",
+                    "per_vac_16",
+                    "per_vac_moe_16",
+                    "own_vac_rate_16",
+                    "own_vac_rate_moe_16",
+                    "rent_vac_rate_16",
+                    "rent_vac_rate_moe_16",
+                    "own_occ_num_16",
+                    "own_occ_num_moe_16",
+                    "own_occ_per_16",
+                    "own_occ_per_moe_16",
+                    "rent_occ_num_16",
+                    "rent_occ_num_moe_16",
+                    "rent_occ_per_16",
+                    "rent_occ_per_moe_16",
+                    "move_15plus_num_16",
+                    "move_15plus_num_moe_16",
+                    "move_15plus_per_16",
+                    "move_15plus_per_moe_16",
+                    "move_10_14_num_16",
+                    "move_10_14_num_moe_16",
+                    "move_10_14_per_16",
+                    "move_10_14_per_moe_16",
+                    "move_80_89_num_16",
+                    "move_80_89_num_moe_16",
+                    "move_80_89_per_16",
+                    "move_80_89_per_moe_16",
+                    "move_79earl_num_16",
+                    "move_79earl_num_moe_16",
+                    "move_79earl_per_16",
+                    "move_79earl_per_moe_16",
+                    "median_home_value_16",
+                    "median_home_value_moe_16",
+                    "SMOCAPI_35plus_num_16",
+                    "SMOCAPI_35plus_num_moe_16",
+                    "SMOCAPI_35plus_per_16",
+                    "SMOCAPI_35plus_per_moe_16",
+                    "occ_units_pay_rent_16",
+                    "occ_units_pay_rent_moe_16",
+                    "median_rent_16",
+                    "median_rent_moe_16",
+                    "GRAPI_35plus_num_16",
+                    "GRAPI_35plus_num_moe_16",
+                    "GRAPI_35plus_per_16",
+                    "GRAPI_35plus_per_moe_16") 
+
+
+colnames(key_house_16) <- house_names_16
+
+
+# Calculate number of long-standing homeowners (ie 2016 census 1989, 27+ years or more) and moved in last 6 years
+
+key_house_16$move_80_89_per_16 <- as.numeric(as.character(key_house_16$move_80_89_per_16))
+key_house_16$move_79earl_per_16 <- as.numeric(as.character(key_house_16$move_79earl_per_16))
+key_house_16$move_15plus_per_16 <- as.numeric(as.character(key_house_16$move_15plus_per_16))
+key_house_16$move_10_14_per_16 <- as.numeric(as.character(key_house_16$move_10_14_per_16))
+
+key_house_16 <- key_house_16 %>% mutate(move_in_27plus_yrs_num_16 = move_80_89_num_16 + move_79earl_num_16,
+                                        move_in_27plus_yrs_per_16 = move_80_89_per_16 + move_79earl_per_16,
+                                        move_recent_num_16 = move_15plus_num_16 + move_10_14_num_16,
+                                        move_recent_per_16 = move_15plus_per_16 + move_10_14_per_16)
+
+
+# Change factor (percent) variables to numeric
+
+# House 2010
+
+key_house_10$per_occ_10 <- as.numeric(as.character(key_house_10$per_occ_10))
+key_house_10$per_vac_10 <- as.numeric(as.character(key_house_10$per_vac_10))
+key_house_10$own_vac_rate_10 <-as.numeric(as.character(key_house_10$own_vac_rate_10))
+key_house_10$rent_vac_rate_10 <-as.numeric(as.character(key_house_10$rent_vac_rate_10))
+key_house_10$own_occ_per_10 <-as.numeric(as.character(key_house_10$own_occ_per_10))
+key_house_10$rent_occ_per_10 <-as.numeric(as.character(key_house_10$rent_occ_per_10))
+key_house_10$move_05plus_per_10 <-as.numeric(as.character(key_house_10$move_05plus_per_10))
+key_house_10$SMOCAPI_35plus_per_10 <-as.numeric(as.character(key_house_10$SMOCAPI_35plus_per_10))
+key_house_10$median_home_value_10 <-as.numeric(as.character(key_house_10$median_home_value_10))
+key_house_10$GRAPI_35plus_per_10 <-as.numeric(as.character(key_house_10$GRAPI_35plus_per_10))
+key_house_10$GRAPI_35plus_per_10 <-as.numeric(as.character(key_house_10$GRAPI_35plus_per_10))
+key_house_10$median_rent_10 <- as.numeric(as.character(key_house_10$median_rent_10))
+# House 2016
+
+key_house_16$per_occ_16 <- as.numeric(as.character(key_house_16$per_occ_16))
+key_house_16$per_vac_16 <- as.numeric(as.character(key_house_16$per_vac_16))
+key_house_16$own_vac_rate_16 <-as.numeric(as.character(key_house_16$own_vac_rate_16))
+key_house_16$rent_vac_rate_16 <-as.numeric(as.character(key_house_16$rent_vac_rate_16))
+key_house_16$own_occ_per_16 <-as.numeric(as.character(key_house_16$own_occ_per_16))
+key_house_16$rent_occ_per_16 <-as.numeric(as.character(key_house_16$rent_occ_per_16))
+key_house_16$move_15plus_per_16 <-as.numeric(as.character(key_house_16$move_15plus_per_16))
+key_house_16$SMOCAPI_35plus_per_16 <-as.numeric(as.character(key_house_16$SMOCAPI_35plus_per_16))
+key_house_16$median_home_value_16 <-as.numeric(as.character(key_house_16$median_home_value_16))
+key_house_16$GRAPI_35plus_per_16 <-as.numeric(as.character(key_house_16$GRAPI_35plus_per_16))
+key_house_16$GRAPI_35plus_per_16 <-as.numeric(as.character(key_house_16$GRAPI_35plus_per_16))
+key_house_16$median_rent_16 <- as.numeric(as.character(key_house_16$median_rent_16))
+
+
+#Join house 10 and 16 df's
+
+key_house_10$GEOID10 <- as.character(key_house_10$GEOID10)
+key_house_16$GEOID10 <- as.character(key_house_16$GEOID10)
+all_years_house<- full_join(key_house_10, key_house_16, by = c("GEOID10" = "GEOID10"))
+
+#Calculate important indicators of change
+
+house_change <- all_years_house %>% mutate(rent_change = median_rent_16 - median_rent_10,
+                                      home_value_change = median_home_value_16-median_home_value_10,
+                                          rent_occ_change_per = rent_occ_per_16 - rent_occ_per_10,
+                                          own_occ_change_per = own_occ_per_16 - own_occ_per_10,
+                               GRAPI_35plus_change_per = GRAPI_35plus_per_16 - GRAPI_35plus_per_10,
+                         SMOCAPI_35plus_change_per = SMOCAPI_35plus_per_16 - SMOCAPI_35plus_per_10)
+
+class(house_change$median_home_value_10)
+View(house_change)
+```
+
+### Combining all variables from change dataframes
+
+``` {r message=FALSE, warning = FALSE}
+econ_edu_join <- full_join(economic_change, edu_change, by = c("GEOID10", "GEOID10"))
+econ_edu_race_join <- full_join(econ_edu_join, race_change, by = c("GEOID10", "GEOID10"))
+all_gent_var <- full_join(econ_edu_race_join, house_change, by = c("GEOID10", "GEOID10"))
+
+# Calculate percent of people aged 25-44
+
+all_gent_var_new <- all_gent_var %>% mutate(per_25_44_10 = (pop_25_44_10/total_pop_10)*100,
+                                            per_25_44_16 = (num_25_44yo_16/total_pop_16)*100,
+                                            per_25_44_change = per_25_44_16 - per_25_44_10,
+                                            total_pop_chg = total_pop_16 - total_pop_10)
+
+# Select only change variables
+
+gent_change_df <- all_gent_var_new %>% select("GEOID10", contains("change"), contains("chg"))
+
+# Make new df for all 2010 variables with Margins of error for easy access
+
+gent_variables_2010_df <- all_gent_var_new %>% select("GEOID10", contains("_10"), contains("10"))
+
+# Make new df for all 2016 variables with Margins of error for easy access
+
+gent_variables_2016_df <- all_gent_var_new %>% select("GEOID10", contains("_16"), contains("16"))
+
+# Combine new data frames with city of buffalo census tracts to exclude census tracts outside of city limits
+
+buffalo_change_df <- full_join(buffalo_tracts, gent_change_df, by = c("GEOID10"= "GEOID10")) %>% filter(NAME10 != "NA")
+
+
+buffalo_change_df[is.na(buffalo_change_df)] <- 0
+
+buffalo_2010_df <- full_join(buffalo_tracts, gent_variables_2010_df, by = c("GEOID10"= "GEOID10")) %>% filter(NAME10 != "NA")
+
+buffalo_2016_df <- full_join(buffalo_tracts, gent_variables_2016_df, by = c("GEOID10"= "GEOID10")) %>% filter(NAME10 != "NA")
+
+```
+
+The key variables that I will consider to measure gentrification are based on the historical context of Buffalo after rapid deindustrialization and suburbanization that left the inner-city impoverished and segregated. Changes in the key variables within neighborhoods that experienced a period of disinvestment, represented by concentrated disadvantage in 2000, between 2010 and 2016 establish the gentrification frontier. The gentrification frontier will be categotized as such:
+
+1. Not gentrified - poor
+  - Census tracts that remained consistent or have seen decreases in affluent populations
+2. Not gentrified - high status
+  - Census tracts that may have seen increases in affluent populations but have historically low concentrated disadvantage.
+3. Potentially gentrifying
+  - Disinvested census tracts with some increase in affluent populations
+4. Gentrifying
+  - Disinvested census tracts with inreases in at least half of the variables that represented     gentrfication
+5. Gentrified
+  - Census tracts that have seen increases in all of the gentrification variables.
+  
+The gentrification variables considered for the regression analysis are :
+
+1. Change in the percentage of white population (increase)
+2. Change in the percentage of the population living below the poverty line (decrease)
+3. Change in the household median income (increase)
+4. Change in the percentage of the population 25 years of age or older with at least a bachelors degree (increase)
+5. Change in the percentage of the population living in owner occupied housing (increase)
+6. Change in the percentage of the population employed in managerial, technical, and professional occupations (increase)
+7. Change in total population (increase)
+8. Change in percentage of population ages 25-44 years of age (increase)
+9. Change in median rent (increase)
+
+The change in all of these variables in each census tract must be considered in comparision to the average change of the City of Buffalo as a whole.
+
+```{r message = FALSE}
+
+# Calculate city change averages in key gentrification variables
+
+
+
+mean_white_chg <- mean(buffalo_change_df$white_change)
+mean_pov_chg <- mean(buffalo_change_df$Per_Pov_Chg)
+mean_income_chg <- mean(buffalo_change_df$Med_Inc_Chg)
+mean_college_chg <- mean(buffalo_change_df$college_change)
+mean_own_occ_chg <- mean(buffalo_change_df$own_occ_change_per)
+mean_prof_occ_chg <- mean(buffalo_change_df$Per_Occ_Mgt_Chg)
+mean_total_pop_chg <- mean(buffalo_change_df$total_pop_chg)
+mean_adult_chg <- mean(buffalo_change_df$per_25_44_change)
+mean_rent_chg <- mean(buffalo_change_df$rent_change)
+
+# create a matrix of the variables 
+
+Var_desc_vector <- c("Change in the percentage of white population (increase)","Change in the percentage of the population living below the poverty line (decrease)","Change in the household median income (increase)","Change in the percentage of the population 25 years of age or older with at least a bachelors degree (increase)","Change in the percentage of the population living in owner occupied housing (increase)","Change in the percentage of the population employed in managerial, technical, and professional occupations (increase)","Change in total population (increase)","Change in percentage of population ages 25-44 years of age (increase)","Change in median rent (increase)")
+
+
+mean_change_matrix <- matrix(nrow = 9, ncol = 2, c(Var_desc_vector, mean_white_chg, mean_pov_chg, mean_income_chg, mean_college_chg, mean_own_occ_chg, mean_prof_occ_chg, mean_total_pop_chg, mean_adult_chg, mean_rent_chg))
+
+colnames(mean_change_matrix) <- c("Variable", "Mean Change (2010-2016)")
+
+mean_change_df <- as.data.frame(mean_change_matrix)
+
+
+
+# Make into a nice html table  
+
+library(knitr)
+library(kableExtra)
+
+kable(mean_change_df) %>%
+  kable_styling(bootstrap_options = c("striped", "hover"))
+
+
+```
+
+From 2010 to 2016, according to the U.S. Census Bureau American Community Survey data, the city of Buffalo as a whole has seen an average increase in six out of the nine variables included in the gentrification assessment, only seeing a decrease in the percentage of white population, percentage of the population living in owner occupied housing, and change in total population. While it is apparent that, according to census data and traditional methods of measuring gentrification, the City of Buffalo is gentrifying as whole. It is imperative to analyze the spatial mismatch of disadvantage and affluence within city neighborhoods before making conclusions about the state of the city.
+
+```{r message = FALSE, warning=FALSE}
+# Convert sf to sp in order to convert to geojson for interactive mapping with leaflet
+
+buffalo_change_sp <- as(buffalo_change_df, "Spatial") # Neighborhood change
+
+
+# Convert to geojson
+
+buffalo_change_json <- geojson_json(buffalo_change_sp)
+
+
+# Simplify the geometry to decrease storage size of spatial object
+
+buffalo_change_json_simp <- ms_simplify(buffalo_change_json)
+
+
+# Write as a geojson to bring back into R for mapping
+
+geojson_write(buffalo_change_json_simp, file = "city_change.geojson")
+
+
+# Read in .geojson to map
+
+city_change <- geojson_read("city_change.geojson", what = "sp")
+
+
+# Map for interactive view of concentrated disadvantage
+summary(city_change$white_change)
+white_bins <- c(-30, -15, -7, 0, 7, 15, 30) # Sets the interval for color scheme
+white_pal <- colorBin("viridis", domain = city_change$white_change, bins = bins) # Gives diverging color scheme
+
+# Created html popup of index of concentrated disadvantage
+
+labels_white <- sprintf(
+  "<strong>%g Change Percent</strong>",
+  city_change$white_change
+) %>% lapply(htmltools::HTML)
+
+# Create leaflet map to label by geometric index
+
+white_change_map <- leaflet() %>% setView(-78.8784, 42.8864, 10.9) %>% addTiles() %>%
+  addPolygons(data = nbhds_json, fillOpacity = 0, weight = 3, opacity = 1) %>%
+  addPolygons(data = city_change, fillColor = ~white_pal(white_change),
+  weight = 0.5,
+  opacity = 0.7,
+  color = "white",
+  dashArray = "3",
+  fillOpacity = 0.5,
+  highlight = highlightOptions(
+    weight = 5,
+    color = "#666",
+    dashArray = "",
+    fillOpacity = 0.5,
+    bringToFront = TRUE),
+  label = labels_white,
+  labelOptions = labelOptions(
+    style = list("font-weight" = "normal", padding = "3px 8px"),
+    textsize = "15px",
+    direction = "auto")) 
+
+white_change_map
+
+# Create leaflet map to label by neighborhood
+
+CD_nbhd_2000 <- leaflet() %>% setView(-78.8784, 42.8864, 10.7) %>% addTiles() %>%
+  addPolygons(data = city_CD, fillColor = ~pal_00(index_00),
+              weight = 2,
+              opacity = 1,
+              color = "white",
+              dashArray = "3",
+              fillOpacity = 0.5) %>%
+  addPolygons(data = nbhds_json, fillOpacity = 0, weight = 1.2,
+                          label = nbhds_json$nbhdname) %>%
+  addLegend(pal = pal_00, values = city_CD$index_00, opacity = 0.5, title = "Concentrated Disadvantage (%)",
+                position = "bottomleft")
+
+
+
+```
+
 ## Measuring Gentrification: Traditional Methodology with Open Data Assessment
 
 <br>In recent years, some residential tax parcels have sold for much more than the assessed value and are located in neighborhoods where revitalization efforts have taken place. The total assessment value of each residential tax parcel determines how much a homeowner pays in property taxes each year, thus contributes to the development of city infrastructure. The purpose of this project is to use the city of Buffalo’s Open Data Portal to analyze and visualize gentrification based on the sold price of residential tax parcels above the total assessment value and understand which changing socioeconomic variables play the largest role the amount sold price was over the assessment value.  By using R Studio, I will filter the data set to only include residential tax parcels that were sold between 2010 and 2016 for higher than the assessed value, which I will then group by census tract to portray descriptive statistics for each neighborhood. By using census data provided by the U.S. Census Bureau’s American Community Survey 5-year estimates for 2010 and 2016, I will analyze the socioeconomic change of key indicators of gentrification documented in the literature, also at the census tract level. In order to model this relationship, I will use a multivariate regression model to test the strength of the relationships.</br>
