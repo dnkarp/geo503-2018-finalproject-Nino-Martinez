@@ -996,21 +996,98 @@ city_change <- geojson_read("city_change.geojson", what = "sp")
 
 
 # Map for interactive view of concentrated disadvantage
-summary(city_change$white_change)
-white_bins <- c(-30, -15, -7, 0, 7, 15, 30) # Sets the interval for color scheme
-white_pal <- colorBin("viridis", domain = city_change$white_change, bins = bins) # Gives diverging color scheme
 
-# Created html popup of index of concentrated disadvantage
+summary(city_change$white_change) # Understand range of data
+white_bins <- c(-30, -15, -7, 0, 7, 15, 30) # Sets the interval for color scheme based on range
+white_pal <- colorBin("RdYlBu", domain = city_change$white_change, bins = white_bins)
 
 labels_white <- sprintf(
-  "<strong>%g Change Percent</strong>",
+  "<strong>%g Percent Change</strong>",
   city_change$white_change
 ) %>% lapply(htmltools::HTML)
 
-# Create leaflet map to label by geometric index
+summary(city_change$Per_Pov_Chg) #can use same bins
+pov_pal <- colorBin("RdYlBu", domain = city_change$white_change, bins = white_bins, reverse = TRUE) # invert for decreasing being better
 
-white_change_map <- leaflet() %>% setView(-78.8784, 42.8864, 10.9) %>% addTiles() %>%
-  addPolygons(data = nbhds_json, fillOpacity = 0, weight = 3, opacity = 1) %>%
+labels_pov <- sprintf(
+  "<strong>%g Percent Change</strong>",
+  city_change$Per_Pov_Chg
+) %>% lapply(htmltools::HTML)
+
+summary(city_change$Med_Inc_Chg)
+
+income_bins <- c(-15000, -5000, 0, 5000, 15000, 30000, 55000) 
+income_pal <- colorBin("RdYlBu", domain = city_change$Med_Inc_Chg, bins = income_bins) 
+
+labels_income <- sprintf(
+  "<strong>%g Dollar Change</strong>",
+  city_change$Med_Inc_Chg
+) %>% lapply(htmltools::HTML)
+
+summary(city_change$college_change)
+
+college_bins <- c(-70, -30, -15, 0, 5, 15, 30)
+college_pal <- colorBin("RdYlBu", domain = city_change$college_change, bins = college_bins) 
+
+labels_college <- sprintf(
+  "<strong>%g Percent Change</strong>",
+  city_change$college_change
+) %>% lapply(htmltools::HTML)
+
+summary(city_change$own_occ_change_per)
+
+homeowners_bins <- c(-20, -10, -5, 0, 5, 10, 15)
+homeowners_pal <- colorBin("RdYlBu", domain = city_change$own_occ_change_per, bins = homeowners_bins) 
+
+labels_homeowners <- sprintf(
+  "<strong>%g Percent Change</strong>",
+  city_change$own_occ_change_per
+) %>% lapply(htmltools::HTML)
+
+summary(city_change$Per_Occ_Mgt_Chg)
+
+occupation_bins <- c(-35, -15, -5, 0, 10, 20, 30)
+occupation_pal <- colorBin("RdYlBu", domain = city_change$Per_Occ_Mgt_Chg, bins = occupation_bins) 
+
+labels_occupation <- sprintf(
+  "<strong>%g Percent Change</strong>",
+  city_change$Per_Occ_Mgt_Chg
+) %>% lapply(htmltools::HTML)
+
+summary(city_change$total_pop_chg)
+
+pop_bins <- c(-1500, -750, -325, 0, 750, 1500)
+pop_pal <- colorBin("RdYlBu", domain = city_change$total_pop_chg, bins = pop_bins) 
+
+labels_pop <- sprintf(
+  "<strong>%g Amount Change</strong>",
+  city_change$total_pop_chg
+) %>% lapply(htmltools::HTML)
+
+summary(city_change$per_25_44_change)
+
+adult_bins <- c(-13, -7, -3, 0, 3, 7, 13)
+adult_pal <- colorBin("RdYlBu", domain = city_change$per_25_44_change, bins = adult_bins) 
+
+labels_adult <- sprintf(
+  "<strong>%g Percent Change</strong>",
+  city_change$per_25_44_change
+) %>% lapply(htmltools::HTML)
+
+summary(city_change$rent_change)
+
+rent_bins <- c(-250, -100, -50, 0, 50, 100, 300)
+rent_pal <- colorBin("RdYlBu", domain = city_change$rent_change, bins = rent_bins) 
+
+labels_rent <- sprintf(
+  "<strong>%g Dollar Change</strong>",
+  city_change$rent_change
+) %>% lapply(htmltools::HTML)
+
+
+# Create leaflet map to toggle between layers of gentrification variables
+
+nbhd_chg_map <- leaflet() %>% setView(-78.8784, 42.8864, 10.9) %>% addTiles() %>%
   addPolygons(data = city_change, fillColor = ~white_pal(white_change),
   weight = 0.5,
   opacity = 0.7,
@@ -1027,26 +1104,185 @@ white_change_map <- leaflet() %>% setView(-78.8784, 42.8864, 10.9) %>% addTiles(
   labelOptions = labelOptions(
     style = list("font-weight" = "normal", padding = "3px 8px"),
     textsize = "15px",
-    direction = "auto")) 
+    direction = "auto"),
+  group = "White Population") %>%
+    addPolygons(data = city_change, fillColor = ~pov_pal(Per_Pov_Chg),
+  weight = 0.5,
+  opacity = 0.7,
+  color = "white",
+  dashArray = "3",
+  fillOpacity = 0.5,
+  highlight = highlightOptions(
+    weight = 5,
+    color = "#666",
+    dashArray = "",
+    fillOpacity = 0.5,
+    bringToFront = TRUE),
+  label = labels_pov,
+  labelOptions = labelOptions(
+    style = list("font-weight" = "normal", padding = "3px 8px"),
+    textsize = "15px",
+    direction = "auto"),
+  group = "Poverty") %>%
+      addPolygons(data = city_change, fillColor = ~pov_pal(Per_Pov_Chg),
+  weight = 0.5,
+  opacity = 0.7,
+  color = "white",
+  dashArray = "3",
+  fillOpacity = 0.5,
+  highlight = highlightOptions(
+    weight = 5,
+    color = "#666",
+    dashArray = "",
+    fillOpacity = 0.5,
+    bringToFront = TRUE),
+  label = labels_pov,
+  labelOptions = labelOptions(
+    style = list("font-weight" = "normal", padding = "3px 8px"),
+    textsize = "15px",
+    direction = "auto"),
+  group = "Poverty") %>%
+      addPolygons(data = city_change, fillColor = ~income_pal(Med_Inc_Chg),
+  weight = 0.5,
+  opacity = 0.7,
+  color = "white",
+  dashArray = "3",
+  fillOpacity = 0.5,
+  highlight = highlightOptions(
+    weight = 5,
+    color = "#666",
+    dashArray = "",
+    fillOpacity = 0.5,
+    bringToFront = TRUE),
+  label = labels_income,
+  labelOptions = labelOptions(
+    style = list("font-weight" = "normal", padding = "3px 8px"),
+    textsize = "15px",
+    direction = "auto"),
+  group = "Median Income") %>%
+      addPolygons(data = city_change, fillColor = ~college_pal(college_change),
+  weight = 0.5,
+  opacity = 0.7,
+  color = "white",
+  dashArray = "3",
+  fillOpacity = 0.5,
+  highlight = highlightOptions(
+    weight = 5,
+    color = "#666",
+    dashArray = "",
+    fillOpacity = 0.5,
+    bringToFront = TRUE),
+  label = labels_college,
+  labelOptions = labelOptions(
+    style = list("font-weight" = "normal", padding = "3px 8px"),
+    textsize = "15px",
+    direction = "auto"),
+  group = "College Grads") %>%
+      addPolygons(data = city_change, fillColor = ~homeowners_pal(own_occ_change_per),
+  weight = 0.5,
+  opacity = 0.7,
+  color = "white",
+  dashArray = "3",
+  fillOpacity = 0.5,
+  highlight = highlightOptions(
+    weight = 5,
+    color = "#666",
+    dashArray = "",
+    fillOpacity = 0.5,
+    bringToFront = TRUE),
+  label = labels_homeowners,
+  labelOptions = labelOptions(
+    style = list("font-weight" = "normal", padding = "3px 8px"),
+    textsize = "15px",
+    direction = "auto"),
+  group = "Home Owners") %>%
+  addPolygons(data = city_change, fillColor = ~occupation_pal(Per_Occ_Mgt_Chg),
+  weight = 0.5,
+  opacity = 0.7,
+  color = "white",
+  dashArray = "3",
+  fillOpacity = 0.5,
+  highlight = highlightOptions(
+    weight = 5,
+    color = "#666",
+    dashArray = "",
+    fillOpacity = 0.5,
+    bringToFront = TRUE),
+  label = labels_occupation,
+  labelOptions = labelOptions(
+    style = list("font-weight" = "normal", padding = "3px 8px"),
+    textsize = "15px",
+    direction = "auto"),
+  group = "Professional Occupation") %>%
+  addPolygons(data = city_change, fillColor = ~pop_pal(total_pop_chg),
+  weight = 0.5,
+  opacity = 0.7,
+  color = "white",
+  dashArray = "3",
+  fillOpacity = 0.5,
+  highlight = highlightOptions(
+    weight = 5,
+    color = "#666",
+    dashArray = "",
+    fillOpacity = 0.5,
+    bringToFront = TRUE),
+  label = labels_pop,
+  labelOptions = labelOptions(
+    style = list("font-weight" = "normal", padding = "3px 8px"),
+    textsize = "15px",
+    direction = "auto"),
+  group = "Total Population") %>%
+  addPolygons(data = city_change, fillColor = ~adult_pal(per_25_44_change),
+  weight = 0.5,
+  opacity = 0.7,
+  color = "white",
+  dashArray = "3",
+  fillOpacity = 0.5,
+  highlight = highlightOptions(
+    weight = 5,
+    color = "#666",
+    dashArray = "",
+    fillOpacity = 0.5,
+    bringToFront = TRUE),
+  label = labels_adult,
+  labelOptions = labelOptions(
+    style = list("font-weight" = "normal", padding = "3px 8px"),
+    textsize = "15px",
+    direction = "auto"),
+  group = "Adult Population") %>%
+  addPolygons(data = city_change, fillColor = ~rent_pal(rent_change),
+  weight = 0.5,
+  opacity = 0.7,
+  color = "white",
+  dashArray = "3",
+  fillOpacity = 0.5,
+  highlight = highlightOptions(
+    weight = 5,
+    color = "#666",
+    dashArray = "",
+    fillOpacity = 0.5,
+    bringToFront = TRUE),
+  label = labels_rent,
+  labelOptions = labelOptions(
+    style = list("font-weight" = "normal", padding = "3px 8px"),
+    textsize = "15px",
+    direction = "auto"),
+  group = "Median Rent") %>%
+    addPolygons(data = nbhds_json, fillOpacity = 0, weight = 1, opacity = 1, group = "Neighborhood",
+              label = nbhds_json$nbhdname) %>%
+  addLayersControl(overlayGroups = c("White Population", "Poverty", "Median Income", "College Grads", "Home Owners", "Professional Occupation", "Total Population", "Adult Population", "Median Rent"),
+                   options = layersControlOptions(collapsed = FALSE),
+                   baseGroups = "Neighborhoods")
 
-white_change_map
-
-# Create leaflet map to label by neighborhood
-
-CD_nbhd_2000 <- leaflet() %>% setView(-78.8784, 42.8864, 10.7) %>% addTiles() %>%
-  addPolygons(data = city_CD, fillColor = ~pal_00(index_00),
-              weight = 2,
-              opacity = 1,
-              color = "white",
-              dashArray = "3",
-              fillOpacity = 0.5) %>%
-  addPolygons(data = nbhds_json, fillOpacity = 0, weight = 1.2,
-                          label = nbhds_json$nbhdname) %>%
-  addLegend(pal = pal_00, values = city_CD$index_00, opacity = 0.5, title = "Concentrated Disadvantage (%)",
-                position = "bottomleft")
+```
 
 
+### Explore Gentrification Map 
 
+This interactive map allows you to view the key variables of neighborhood change that indicate gentrification in Buffalo NY, simply toggle between layers to view the change. Neighborhoods in blue have encountered the greatest change in terms of gentrification variables while neighborhoods in orange/red have seen a decrease in most variables.
+
+```{r}
+nbhd_chg_map
 ```
 
 ## Measuring Gentrification: Traditional Methodology with Open Data Assessment
