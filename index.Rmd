@@ -1098,8 +1098,7 @@ nbhd_chg_map <- leaflet() %>% setView(-78.8784, 42.8864, 10.9) %>% addTiles() %>
     weight = 5,
     color = "#666",
     dashArray = "",
-    fillOpacity = 0.5,
-    bringToFront = TRUE),
+    fillOpacity = 0.5),
   label = labels_white,
   labelOptions = labelOptions(
     style = list("font-weight" = "normal", padding = "3px 8px"),
@@ -1116,8 +1115,7 @@ nbhd_chg_map <- leaflet() %>% setView(-78.8784, 42.8864, 10.9) %>% addTiles() %>
     weight = 5,
     color = "#666",
     dashArray = "",
-    fillOpacity = 0.5,
-    bringToFront = TRUE),
+    fillOpacity = 0.5),
   label = labels_pov,
   labelOptions = labelOptions(
     style = list("font-weight" = "normal", padding = "3px 8px"),
@@ -1134,8 +1132,7 @@ nbhd_chg_map <- leaflet() %>% setView(-78.8784, 42.8864, 10.9) %>% addTiles() %>
     weight = 5,
     color = "#666",
     dashArray = "",
-    fillOpacity = 0.5,
-    bringToFront = TRUE),
+    fillOpacity = 0.5),
   label = labels_pov,
   labelOptions = labelOptions(
     style = list("font-weight" = "normal", padding = "3px 8px"),
@@ -1152,8 +1149,7 @@ nbhd_chg_map <- leaflet() %>% setView(-78.8784, 42.8864, 10.9) %>% addTiles() %>
     weight = 5,
     color = "#666",
     dashArray = "",
-    fillOpacity = 0.5,
-    bringToFront = TRUE),
+    fillOpacity = 0.5),
   label = labels_income,
   labelOptions = labelOptions(
     style = list("font-weight" = "normal", padding = "3px 8px"),
@@ -1170,8 +1166,7 @@ nbhd_chg_map <- leaflet() %>% setView(-78.8784, 42.8864, 10.9) %>% addTiles() %>
     weight = 5,
     color = "#666",
     dashArray = "",
-    fillOpacity = 0.5,
-    bringToFront = TRUE),
+    fillOpacity = 0.5),
   label = labels_college,
   labelOptions = labelOptions(
     style = list("font-weight" = "normal", padding = "3px 8px"),
@@ -1188,8 +1183,7 @@ nbhd_chg_map <- leaflet() %>% setView(-78.8784, 42.8864, 10.9) %>% addTiles() %>
     weight = 5,
     color = "#666",
     dashArray = "",
-    fillOpacity = 0.5,
-    bringToFront = TRUE),
+    fillOpacity = 0.5),
   label = labels_homeowners,
   labelOptions = labelOptions(
     style = list("font-weight" = "normal", padding = "3px 8px"),
@@ -1206,8 +1200,7 @@ nbhd_chg_map <- leaflet() %>% setView(-78.8784, 42.8864, 10.9) %>% addTiles() %>
     weight = 5,
     color = "#666",
     dashArray = "",
-    fillOpacity = 0.5,
-    bringToFront = TRUE),
+    fillOpacity = 0.5),
   label = labels_occupation,
   labelOptions = labelOptions(
     style = list("font-weight" = "normal", padding = "3px 8px"),
@@ -1224,8 +1217,7 @@ nbhd_chg_map <- leaflet() %>% setView(-78.8784, 42.8864, 10.9) %>% addTiles() %>
     weight = 5,
     color = "#666",
     dashArray = "",
-    fillOpacity = 0.5,
-    bringToFront = TRUE),
+    fillOpacity = 0.5),
   label = labels_pop,
   labelOptions = labelOptions(
     style = list("font-weight" = "normal", padding = "3px 8px"),
@@ -1242,8 +1234,7 @@ nbhd_chg_map <- leaflet() %>% setView(-78.8784, 42.8864, 10.9) %>% addTiles() %>
     weight = 5,
     color = "#666",
     dashArray = "",
-    fillOpacity = 0.5,
-    bringToFront = TRUE),
+    fillOpacity = 0.5),
   label = labels_adult,
   labelOptions = labelOptions(
     style = list("font-weight" = "normal", padding = "3px 8px"),
@@ -1260,8 +1251,7 @@ nbhd_chg_map <- leaflet() %>% setView(-78.8784, 42.8864, 10.9) %>% addTiles() %>
     weight = 5,
     color = "#666",
     dashArray = "",
-    fillOpacity = 0.5,
-    bringToFront = TRUE),
+    fillOpacity = 0.5),
   label = labels_rent,
   labelOptions = labelOptions(
     style = list("font-weight" = "normal", padding = "3px 8px"),
@@ -1270,10 +1260,7 @@ nbhd_chg_map <- leaflet() %>% setView(-78.8784, 42.8864, 10.9) %>% addTiles() %>
   group = "Median Rent") %>%
     addPolygons(data = nbhds_json, fillOpacity = 0, weight = 1, opacity = 1, group = "Neighborhood",
               label = nbhds_json$nbhdname) %>%
-  addLayersControl(overlayGroups = c("White Population", "Poverty", "Median Income", "College Grads", "Home Owners", "Professional Occupation", "Total Population", "Adult Population", "Median Rent"),
-                   options = layersControlOptions(collapsed = FALSE),
-                   baseGroups = "Neighborhoods")
-
+  addLayersControl(overlayGroups = c("White Population", "Poverty", "Median Income", "College Grads", "Home Owners", "Professional Occupation", "Total Population", "Adult Population", "Median Rent", "Neighborhoods"),options = layersControlOptions(collapsed = FALSE))
 ```
 
 
