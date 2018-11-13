@@ -51,7 +51,7 @@ subtitle: Using Census and Open Data to Map Neighborhood Change
 
 In order to properly quantify gentrification, it is necessary to measure urban decline and concentrated disadvantage within the city historically. “By definition, gentrification is reinvestment in and rebuilding of the physical structures that have undergone a period of disinvestment" (Heidkamp & Lucas, 107). Neighborhoods that experience a period of disinvesment are often concentrated in disadvantage. Circumstances that make success (most often economically) unusually difficult make places disadvantaged, and “the presence of disadvantage weakens a place’s ability to achieve this goal [economic success]” (Weaver et al, 35). When multiple layers of disadvantage occur in a single location, concentrated disadvantage exists (36). By using the geometric mean of five disadvantage variables provided by the NCDB, I calculate concentrate disadvantage (CD) for the years 1970-2000. I use the same variables used by Weaver et al, 2017 in my calculations because all variables are represented as percentages, thus making comparisons across time consistent as they range from a value of 0-100. The equation can be represented as:
 
-**$Gi  = [(Percent Nonwhitei)* (Percent Female Headed Householdsi) * (Percent Unemployedi) * (Percent in Povertyi) * (Percent Low Educationi)]^1/5, i: 1, 2, …, n$**
+**$Gi  = [(Percent Nonwhitei)* (Percent Female Headed Householdsi) * (Percent Unemployedi) * (Percent in Povertyi) * (Percent Low Educationi)]^1/5, i: 1, 2, …, n$** 
 
 ```{r message = FALSE, warning=FALSE}
 #load all necessary libraries for analysis
